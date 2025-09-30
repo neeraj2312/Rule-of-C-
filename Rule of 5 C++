@@ -1,0 +1,93 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+class MyArray {
+    int* data;
+    size_t size;
+
+public:
+    // Constructor
+    MyArray(size_t n) : size(n), data(nullptr) {
+        cout << "Constructor\n";
+        if (size > 0) {
+            data = new int[size];
+        }
+    }
+
+    // Destructor
+    ~MyArray() {
+        cout << "Destructor\n";
+        delete[] data;
+    }
+
+    // Copy Constructor
+    MyArray(const MyArray& other) : size(other.size), data(nullptr) {
+        cout << "Copy Constructor\n";
+        if (size > 0) {
+            data = new int[size];
+            for (size_t i = 0; i < size; i++) data[i] = other.data[i];
+        }
+    }
+
+    // Copy Assignment Operator
+    MyArray& operator=(const MyArray& other) {
+        cout << "Copy Assignment Operator\n";
+        if (this == &other) return *this; // self-assignment check
+
+        delete[] data; // free old memory
+        size = other.size;
+        data = nullptr;
+        if (size > 0) {
+            data = new int[size];
+            for (size_t i = 0; i < size; i++) data[i] = other.data[i];
+        }
+        return *this;
+    }
+
+    // Move Constructor
+    MyArray(MyArray&& other) noexcept : size(other.size), data(other.data) {
+        cout << "Move Constructor\n";
+        other.size = 0;
+        other.data = nullptr;
+    }
+
+    // Move Assignment Operator
+    MyArray& operator=(MyArray&& other) noexcept {
+        cout << "Move Assignment Operator\n";
+        if (this == &other) return *this; // self-assignment check
+
+        delete[] data; // free old memory
+        size = other.size;
+        data = other.data;
+
+        other.size = 0;
+        other.data = nullptr;
+        return *this;
+    }
+
+    // Utility methods
+    void set(size_t idx, int val) {
+        if (idx < size) data[idx] = val;
+    }
+    int get(size_t idx) const {
+        if (idx < size) return data[idx];
+        throw out_of_range("Index out of bounds");
+    }
+};
+
+// Demo
+int main() {
+    MyArray a1(5);        // Constructor
+    a1.set(0, 42);
+
+    MyArray a2 = a1;      // Copy Constructor
+    MyArray a3(3);
+    a3 = a1;              // Copy Assignment
+
+    MyArray a4 = std::move(a1); // Move Constructor
+    MyArray a5(10);
+    a5 = std::move(a2);   // Move Assignment
+
+    cout << "a3[0] = " << a3.get(0) << "\n";
+    cout << "a4[0] = " << a4.get(0) << "\n";
+}
